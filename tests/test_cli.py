@@ -3,7 +3,6 @@ from certidude.cli import entry_point as cli
 from datetime import datetime, timedelta
 from falcon import testing
 import pytest
-from certidude.api import certidude_app
 
 runner = CliRunner()
 
@@ -30,6 +29,7 @@ def test_cli_setup_authority():
 
 @pytest.fixture(scope='module')
 def client():
+    from certidude.api import certidude_app
     return testing.TestClient(certidude_app().create())
 
 
