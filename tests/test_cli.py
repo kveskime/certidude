@@ -10,14 +10,6 @@ runner = CliRunner()
 
 
 
-@pytest.fixture(scope='module')
-def client():
-    return testing.TestClient(certidude_app().create())
-
-
-def test_get_message(client):
-    pass
-
 def test_cli_setup_authority():
     # Authority setup
     # TODO: parent, common-name, country, state, locality
@@ -35,3 +27,11 @@ def test_cli_setup_authority():
     assert authority.certificate.serial_number == '0000000000000000000000000000000000000001'
     assert authority.certificate.signed < datetime.now()
     assert authority.certificate.expires > datetime.now() + timedelta(days=7000)
+
+@pytest.fixture(scope='module')
+def client():
+    return testing.TestClient(certidude_app().create())
+
+
+def test_get_message(client):
+    pass
