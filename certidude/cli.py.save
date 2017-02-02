@@ -1163,6 +1163,36 @@ def certidude_sign(common_name, overwrite, lifetime):
         cert = authority.sign2(request, private_key, authority_certificate,
             overwrite, True, lifetime)
 
+
+@click.command("serve", help="Run server")
+@click.option("-p", "--port", default=8080 if os.getuid() else 80, help="Listen port")
+@click.option("-l", "--listen", default="0.0.0.0", help="Listen address")
+def certidude_serve(port, listen):
+    from certidude.signer import SignServer
+    from certidude import const
+    click.echo("Using configuration from: %s" % const.CONFIG_PATH)
+
+
+    from certidude import config
+
+    # Fetch UID, GID of certidude user
+    import pwd
+    _, _, uid, gid, gecos, root, shell = pwd.getpwnam("certidude")
+    restricted_groups = []
+    restricted_groups.append(gid)
+
+    """
+    Spawn signer process
+    """
+
+    child_pid = os.fork()
+
+    if child_pid:
+        pass
+    else:
+        spawn_forked_signer_process(gid, uid)
+        return
+
 def spawn_forked_signer_process(gid, uid):
     click.echo("Signer process spawned with PID %d at %s" % (os.getpid(), const.SIGNER_SOCKET_PATH))
     setproctitle("[signer]")
@@ -1172,7 +1202,6 @@ def spawn_forked_signer_process(gid, uid):
         filename=const.SIGNER_LOG_PATH,
         level=logging.INFO)
     os.umask(0o007)
-    from certidude.signer import SignServer
     server = SignServer()
     # Drop privileges
     if not os.getuid():
@@ -1186,26 +1215,7 @@ def spawn_forked_signer_process(gid, uid):
         os.setuid(uid)
     else:
         click.echo("Not dropping privileges of signer process")
-
-
-@click.command("serve", help="Run server")
-@click.option("-p", "--port", default=8080 if os.getuid() else 80, help="Listen port")
-@click.option("-l", "--listen", default="0.0.0.0", help="Listen address")
-def certidude_serve(port, listen):
-    from certidude import const
-    click.echo("Using configuration from: %s" % const.CONFIG_PATH)
-
-
-    from certidude import config
-
-    # Fetch UID, GID of certidude user
-    import pwd
-    _, _, uid, gid, gecos, root, shell = pwd.getpwnam("certidude")
-    restricted_groups = []
-    restricted_groups.append(gid)
-
-
-
+    asyncore.loop()
     """
     Spawn signer process
     """
@@ -1216,8 +1226,100 @@ def certidude_serve(port, listen):
         pass
     else:
         spawn_forked_signer_process(gid, uid)
-    	asyncore.loop()
         return
+
+def spawn_forked_signer_process(gid, uid):
+    click.echo("Signer process spawned with PID %d at %s" % (os.getpid(), const.SIGNER_SOCKET_PATH))
+    setproctitle("[signer]")
+    with open(const.SIGNER_PID_PATH, "w") as fh:
+        fh.write("%d\n" % os.getpid())
+    logging.basicConfig(
+        filename=const.SIGNER_LOG_PATH,
+        level=logging.INFO)
+    os.umask(0o007)
+    server = SignServer()
+    # Drop privileges
+    if not os.getuid():
+        os.chown(const.SIGNER_SOCKET_PATH, uid, gid)
+        os.chmod(const.SIGNER_SOCKET_PATH, 0770)
+
+        click.echo("Dropping privileges of signer")
+        _, _, uid, gid, gecos, root, shell = pwd.getpwnam("nobody")
+        os.setgroups([])
+        os.setgid(gid)
+        os.setuid(uid)
+    else:
+        click.echo("Not dropping privileges of signer process")
+    asyncore.loop()
+    """
+    Spawn signer process
+    """
+
+    child_pid = os.fork()
+
+    if child_pid:
+        pass
+    else:
+        spawn_forked_signer_process(gid, uid)
+        return
+
+def spawn_forked_signer_process(gid, uid):
+    click.echo("Signer process spawned with PID %d at %s" % (os.getpid(), const.SIGNER_SOCKET_PATH))
+    setproctitle("[signer]")
+    with open(const.SIGNER_PID_PATH, "w") as fh:
+        fh.write("%d\n" % os.getpid())
+    logging.basicConfig(
+        filename=const.SIGNER_LOG_PATH,
+        level=logging.INFO)
+    os.umask(0o007)
+    server = SignServer()
+    # Drop privileges
+    if not os.getuid():
+        os.chown(const.SIGNER_SOCKET_PATH, uid, gid)
+        os.chmod(const.SIGNER_SOCKET_PATH, 0770)
+
+        click.echo("Dropping privileges of signer")
+        _, _, uid, gid, gecos, root, shell = pwd.getpwnam("nobody")
+        os.setgroups([])
+        os.setgid(gid)
+        os.setuid(uid)
+    else:
+        click.echo("Not dropping privileges of signer process")
+    asyncore.loop()
+    """
+    Spawn signer process
+    """
+
+    child_pid = os.fork()
+
+    if child_pid:
+        pass
+    else:
+        spawn_forked_signer_process(gid, uid)
+        return
+
+def spawn_forked_signer_process(gid, uid):
+    click.echo("Signer process spawned with PID %d at %s" % (os.getpid(), const.SIGNER_SOCKET_PATH))
+    setproctitle("[signer]")
+    with open(const.SIGNER_PID_PATH, "w") as fh:
+        fh.write("%d\n" % os.getpid())
+    logging.basicConfig(
+        filename=const.SIGNER_LOG_PATH,
+        level=logging.INFO)
+    os.umask(0o007)
+    server = SignServer()
+    # Drop privileges
+    if not os.getuid():
+        os.chown(const.SIGNER_SOCKET_PATH, uid, gid)
+        os.chmod(const.SIGNER_SOCKET_PATH, 0770)
+
+        click.echo("Dropping privileges of signer")
+        _, _, uid, gid, gecos, root, shell = pwd.getpwnam("nobody")
+        os.setgroups([])
+        os.setgid(gid)
+        os.setuid(uid)
+    else:
+
 
 
 

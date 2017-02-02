@@ -1,9 +1,9 @@
-from certidude.cli import spawn_forked_signer_process as start_signer
 from click.testing import CliRunner
 from certidude.cli import entry_point as cli
 from datetime import datetime, timedelta
 from falcon import testing
 import pytest
+from certidude.api import certidude_app
 
 runner = CliRunner()
 
@@ -30,11 +30,9 @@ def test_cli_setup_authority():
 
 @pytest.fixture(scope='module')
 def client():
-    from certidude.api import certidude_app
-    return testing.TestClient(certidude_app())
+    return testing.TestClient(certidude_app()
+)
+
 
 def test_get_message(client):
-    import pwd
-    _, _, uid, gid, _, _, _= pwd.getpwnam("certidude")
-    start_signer(gid=gid, uid=uid)
-    client.simulate_get("/api/revoked")
+    pass
