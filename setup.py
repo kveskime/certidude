@@ -26,6 +26,7 @@ setup(
         "humanize",
         "cryptography",
         "markupsafe",
+        "pytest",
     ],
     scripts=[
         "misc/certidude"

@@ -2,10 +2,10 @@ Certidude
 =========
 
 .. image:: https://travis-ci.org/laurivosandi/certidude.svg?branch=master
-    :target: https://travis-ci.org/laurivosandi/certidude
+    :target: https://travis-ci.org/kveskime/certidude
 
-.. image:: http://codecov.io/github/laurivosandi/certidude/coverage.svg?branch=master
-    :target: http://codecov.io/github/laurivosandi/certidude?branch=master
+.. image:: http://codecov.io/github/kveskime/certidude/coverage.svg?branch=master
+    :target: http://codecov.io/github/kveskime/certidude?branch=master
 
 
 Introduction

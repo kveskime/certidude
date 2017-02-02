@@ -805,9 +805,11 @@ def certidude_setup_authority(username, static_path, kerberos_keytab, nginx_conf
 
     if not static_path.endswith("/"):
         static_path += "/"
-
+    print os.getuid()
+    click.echo(os.getuid())
     if os.getuid() == 0:
         try:
+            click.echo(os.getuid())
             pwd.getpwnam("certidude")
         except KeyError:
             cmd = "adduser", "--system", "--no-create-home", "--group", "certidude"
